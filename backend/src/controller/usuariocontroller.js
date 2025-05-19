@@ -14,9 +14,9 @@ usuarioCtrl.createUsu = async(req, res) => {
         apellido: apellido,
         correo: correo,
         telefono: telefono,
-        edad: edad
+        edad: edad,
     })
-    await newUSU.save();
+    await newUsu.save();
     res.json({message: "El usuario ha sido creado"})
 }
 
@@ -39,7 +39,7 @@ usuarioCtrl.updateUsu = async(req, res) => {
         correo,
         telefono
     })
-    res.json({message: 'El usuraio ha sido actalizado'})
+    res.json({message: 'El usuario ha sido actalizado'})
 }
 
 module.exports = usuarioCtrl;

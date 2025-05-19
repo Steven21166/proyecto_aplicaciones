@@ -16,7 +16,13 @@ app.get('/',(req, res)=>{
     res.send('Bienvenido a mi API red full');
 })
 
-//una ruta para nuestra API de usuarios
+//ruta para la API de usuarios
 app.use('/api/usuarios', require('./routes/usuario'))
+
+//ruta para la API de productos
+app.use('/api/productos', require('./routes/producto'))
+
+//ruta para la API de categorias 
+app.use('/api/categorias', require('./routes/categoria'))
 
 module.exports = app;

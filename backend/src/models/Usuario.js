@@ -7,6 +7,7 @@ const usuarioSchema = new Schema({
     telefono: Number,
     correo: String
 },
+
 {
     timestamps: true
 })
