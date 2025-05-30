@@ -1,43 +1,72 @@
-const productoCtrl = {}
+// src/controller/productocontroller.js
+const Producto = require('../models/Producto');
 
-const Producto = require ('../models/Producto')
+const productoCtrl = {};
 
+// Función para obtener productos
 productoCtrl.getProduct = async (req, res) => {
-    const productos = await Producto.find()
-    res.json(productos)
-}
+  try {
+    const productos = await Producto.find();
+    res.json(productos);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener productos', error: error.message });
+  }
+};
 
+// Función para agregar productos
 productoCtrl.addProduct = async (req, res) => {
-    const {nombre, idcategoria, precio, stock} = req.body;
-    const newProduct = new Producto({
-        nombre : nombre, 
-        idcategoria: idcategoria,
-        precio : precio,
-        stock : stock,
-    })
+  const { nombre, categoria, precio, stock } = req.body;
+  try {
+    const newProduct = new Producto({ nombre, categoria, precio, stock });
     await newProduct.save();
-    res.json({message: 'El producto ha sido añadido'})
-}
+    res.status(201).json({ message: 'Producto creado', producto: newProduct });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al crear el producto', error: error.message });
+  }
+};
 
-productoCtrl.getProducto = async(req, res) => {
-    const producto = await Producto.findById(req.params.id)
-    res.json(producto) 
-}
+// Función para obtener un solo producto
+productoCtrl.getProducto = async (req, res) => {
+  try {
+    const producto = await Producto.findById(req.params.id);
+    if (!producto) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener el producto', error: error.message });
+  }
+};
 
-productoCtrl.deleteProduct = async(req, res) => {
-    await Producto.findByIdAndDelete(req.params.id)
-    res.json({message: 'El producto ha sido eliminado'})
-}
+// Función para eliminar un producto
+productoCtrl.deleteProduct = async (req, res) => {
+  try {
+    const producto = await Producto.findByIdAndDelete(req.params.id);
+    if (!producto) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.json({ message: 'Producto eliminado' });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al eliminar el producto', error: error.message });
+  }
+};
 
-productoCtrl.updateProduct = async(req, res) => {
-    const {nombre, idcategoria, precio, stock} = req.body;
-    await Producto.findByIdAndUpdate(req.params.id, {
-        nombre,
-        idcategoria,
-        precio,
-        stock
-    })
-    res.json({message: 'El producto ha sido actualizado'})
-}
+// Función para actualizar un producto
+productoCtrl.updateProduct = async (req, res) => {
+  const { nombre, categoria, precio, stock } = req.body;
+  try {
+    const producto = await Producto.findByIdAndUpdate(
+      req.params.id,
+      { nombre, categoria, precio, stock },
+      { new: true }  // Devuelve el producto actualizado
+    );
+    if (!producto) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.json({ message: 'Producto actualizado', producto });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar el producto', error: error.message });
+  }
+};
 
 module.exports = productoCtrl;

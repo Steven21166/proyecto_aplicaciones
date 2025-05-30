@@ -1,44 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './App.css';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
+import Navegacion from './components/Navegacion';
+import ListaProducto from './components/ListaProducto';
+import ListaUsuario from './components/ListaUsuario';
+import CrearUsuarios from './components/CrearUsuarios';
+import AñadirProducto from './components/AñadirProducto';
+import Inicio from './components/Inicio';
 
 function App() {
-  const [usuarios, setUsuarios] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const handleLogin = () => {
+    console.log("Sesión iniciada");
+    // Aquí puedes hacer algo más, como actualizar estado global si lo necesitas
+  };
 
-  useEffect(() => {
-    // Ajusta el puerto si tu backend escucha en otro
-    axios.get('http://localhost:3001/api/usuarios')
-      .then(res => {
-        setUsuarios(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setError('No se pudo cargar la lista de usuarios');
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) return <p>Cargando usuarios…</p>;
-  if (error)   return <p>Error: {error}</p>;
+  const handleLogout = () => {
+    localStorage.removeItem("nombreUsuario");
+    window.location.href = "/";
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Usuarios desde el Backend</h1>
-        <ul>
-          {usuarios.map(user => (
-            <li key={user._id || user.id}>
-              {user.nombre || user.name}
-            </li>
-          ))}
-        </ul>
-      </header>
-    </div>
+    <>
+      <Navegacion onLogout={handleLogout} />
+      <Routes>
+        <Route path="/" element={<Inicio />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/ListaProductos" element={<ListaProducto />} />
+        <Route path="/ListaUsuario" element={<ListaUsuario />} />
+        <Route path="/CrearUsuarios" element={<CrearUsuarios />} />
+        <Route path="/AñadirProducto" element={<AñadirProducto />} />
+      </Routes>
+    </>
   );
 }
 
 export default App;
-

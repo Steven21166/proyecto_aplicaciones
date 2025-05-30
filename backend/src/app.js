@@ -1,5 +1,7 @@
 const express = require('express')
 const cors = require('cors')
+const Usuario = require('./models/Usuario'); // 👈 AGREGAR ESTA LÍNEA
+const bcrypt = require('bcryptjs');              // 👈 También necesario para comparar contraseñas
 
 const app = express ();
  
@@ -12,9 +14,30 @@ app.use(express.json())
 
 //rutas
 
-app.get('/',(req, res)=>{
-    res.send('Bienvenido a mi API red full');
-})
+app.get('/debug/login', async (req, res) => {
+  try {
+    const user = await Usuario.findOne({ username: 'admin' });
+    if (!user) {
+      console.log('❌ Usuario admin no encontrado');
+      return res.send('❌ No se encontró el usuario admin');
+    }
+
+    console.log('🔎 Usuario encontrado:', user);
+
+    const match = await bcrypt.compare('admin123', user.password);
+    if (!match) {
+      console.log('❌ Contraseña incorrecta');
+      return res.send('❌ La contraseña no coincide');
+    }
+
+    res.send('✅ Login exitoso con admin/admin123');
+  } catch (err) {
+    console.error('🔥 Error en el login de prueba:', err.message);
+    console.error('📄 Stack:', err.stack);
+    res.status(500).send('❌ Error del servidor');
+  }
+});
+
 
 //ruta para la API de usuarios
 app.use('/api/usuarios', require('./routes/usuario'))
